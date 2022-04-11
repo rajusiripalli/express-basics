@@ -1,40 +1,37 @@
 const express = require('express');
 
+const friendsRouter = require('./routes/friends.route');
+const messagesRouter = require('./routes/messages.route');
 
-const messagesController = require('./controllers/messages.controller');
-const friendsController = require('./controllers/friends.controller');
 
 const app = express();
 
 const PORT = 3000;
 
 
-
+//it's a initial middleware
 app.use((req, res, next) =>{
     const start = Date.now();
     next();
     const delta = Date.now() - start;
 
-    console.log(`${req.method}, ${req.url}, ${delta}ms`);
+    console.log(`${req.method} ${req.baseUrl}${req.url} ${delta}ms`);
 
 })
 
-app.use(express.json());
+//it's a middlware it parses requests json payloads
+app.use(express.json()); 
 
-app.post('/friends', friendsController.postfriends)
+app.use('/friends', friendsRouter);
+app.use('/messages', messagesRouter);
+
+
+
 
 
 app.get('/', (req, res) =>{
     res.send('Hellooo Raju');
 })
-
-app.get('/friends', friendsController.getFriends)
-
-app.get('/friends/:friendId', friendsController.getOneFriend)
-
-app.get('/messages', messagesController.getMessages);
-
-app.post('/messages', messagesController.postMessages);
 
 app.listen(PORT, ()=>{
     console.log(`Listening on Port ${PORT}`);
